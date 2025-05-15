@@ -1,0 +1,103 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  backend-tests:
+    name: Laravel Backend Tests
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: laravel_user
+          POSTGRES_PASSWORD: P@ssw0rd
+          POSTGRES_DB: xpp_pgsql
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: pdo_pgsql
+
+      - name: Install dependencies
+        run: |
+          cd xpp-laravel
+          composer install --no-progress --no-interaction
+
+      - name: Prepare Laravel environment
+        run: |
+          cp .env.testing .env
+          php artisan key:generate
+          php artisan migrate --force
+        working-directory: ./xpp-laravel
+        env:
+          DB_CONNECTION: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_DATABASE: xpp_pgsql
+          DB_USERNAME: laravel_user
+          DB_PASSWORD: P@ssw0rd
+          FILESYSTEM_DISK: local
+          AWS_ACCESS_KEY_ID: test
+          AWS_SECRET_ACCESS_KEY: test
+          AWS_DEFAULT_REGION: us-east-1
+          AWS_BUCKET: test-bucket
+          AWS_URL: https://example.com/
+
+      - name: Run Laravel tests
+        run: php artisan test
+        working-directory: ./xpp-laravel
+        env:
+          DB_CONNECTION: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_DATABASE: xpp_pgsql
+          DB_USERNAME: laravel_user
+          DB_PASSWORD: P@ssw0rd
+          FILESYSTEM_DISK: local
+          AWS_ACCESS_KEY_ID: test
+          AWS_SECRET_ACCESS_KEY: test
+          AWS_DEFAULT_REGION: us-east-1
+          AWS_BUCKET: test-bucket
+          AWS_URL: https://example.com/
+
+  frontend-tests:
+    name: React Frontend Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: |
+          cd xpp-react
+          npm install
+
+      - name: Run frontend tests
+        run: npm test -- --watchAll=false
+        working-directory: ./xpp-react
