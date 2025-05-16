@@ -57,7 +57,7 @@ File Uploads
 Laravel Tests
 Uses PostgreSQL in CI
 .env.testing and .env are auto-generated
-Runs php artisan test after migrations
+Runs ```php artisan test``` after migrations
 
 React Tests
 Uses vitest
@@ -151,3 +151,9 @@ HK Observatory – Weather API
 
 📬 Contact
 For questions or contributions, open an issue or ping the maintainer.
+
+✈️ Deployment
+Currently active at
+```
+http://35.209.5.171:3000/
+```
