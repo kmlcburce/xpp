@@ -16,6 +16,15 @@ A containerized full-stack solution to collect, transform, and deliver weather f
 
 ---
 
+## 🔨 Installation
+```bash
+git clone https://github.com/kmlcburce/xpp/
+```
+Inside the /xpp folder, run
+```
+git clone https://github.com/kmlcburce/xpp-react
+git clone https://github.com/kmlcburce/xpp-laravel
+```
 ## 📦 Services via Docker Compose
 
 | Service         | Port   | Description                         |
@@ -39,7 +48,7 @@ API Endpoints
 /generate?type=current or type=9day - supports two modes
 
 File Uploads
-- CSV is generated using 9-day forecast or current day data
+- CSV is generated using 9-day forecast or current day forecast
 - Temperature is converted to Fahrenheit from Celsius 
 - Files are uploaded to S3 using Laravel’s Storage facade
 - Report metadata (type, filename, URL) is saved to the DB
